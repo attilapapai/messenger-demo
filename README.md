@@ -1,5 +1,45 @@
 # Messenger Demo
 
+TODO: short description for the application, 2 endpoints and the index.html
+
+### Prerequisites
+
+## Running the tests
+
+```
+./gradlew test
+```
+
+## Running the integration tests
+
+```
+./gradlew testInteg
+```
+
+## Running the application
+
+With Gradle:
+
+```
+./gradlew bootRun
+```
+
+or
+
+```
+./gradlew build && java -jar build/libs/messenger-demo-0.0.1-SNAPSHOT.jar
+```
+
+This command will build the application and start it on the 8080 port.
+You can access it at `localhost:8080`.
+
+## Design Decisions
+
+- why use h2 instead of real RDMS
+- why no service layer
+
+## Requirements
+
 The task is to implement a data processing pipeline in the cloud.
 
 - Set up a running environment aligned with the technologies mentioned below
@@ -20,28 +60,3 @@ We're looking for that:
 - The application is built for testability, demonstrated by actual tests
 - Your solution reflects a sense of quality you would be confident in releasing to production
 - Documentation is applied to code / repository describing intent and purpose, as well as complicated / non obvious choices in the implementation
-
-### Prerequisites
-
-## Running the tests
-
-```
-./gradlew test
-```
-
-## Running the application
-
-With Gradle:
-
-```
-./gradlew bootRun
-```
-
-or
-
-```
-./gradlew build && java -jar build/libs/messenger-demo-0.0.1-SNAPSHOT.jar
-```
-
-This command will build the application and start it on the 8080 port.
-You can access it at `localhost:8080`.
