@@ -19,21 +19,21 @@ __Method__: `GET`
 
 __Success response__
 
-- Code: 200 (OK)
+Code: 200 (OK)
 
-- Example response
-  ```
-  [
-    {
-      "id":1
-      "content":"Hello"
-    },
-    {
-      "id":2,
-      "content":"Hi"
-    }
-  ]
-  ```
+Example response
+```
+[
+  {
+    "id":1
+    "content":"Hello"
+  },
+  {
+    "id":2,
+    "content":"Hi"
+  }
+]
+```
 
 ### Add new message
 
@@ -57,22 +57,22 @@ __Example data format__
 
 __Success response__
 
-- Code: 201 (Created)
+Code: 201 (Created)
 
-- Example response
+Example response
 
-  ```
-  {
-    "id":1
-    "content":"Hello"
-  }
-  ```
+```
+{
+  "id":1
+  "content":"Hello"
+}
+```
 
 __Error response__
 
-- Code: 400 (Bad Request)
+Code: 400 (Bad Request)
 
-- Cause: Data is not in a valid format
+Cause: Data is not in a valid format
 
 
 ### Prerequisites
