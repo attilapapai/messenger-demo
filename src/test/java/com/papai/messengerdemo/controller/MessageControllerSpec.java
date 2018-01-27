@@ -43,6 +43,7 @@ public class MessageControllerSpec {
             null,
             new ParameterizedTypeReference<List<Message>>() {}
         );
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(response.getBody()).isEmpty();
     }
 
@@ -56,6 +57,7 @@ public class MessageControllerSpec {
             null,
             new ParameterizedTypeReference<List<Message>>() {}
         );
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(response.getBody()).hasSameElementsAs(storedMessages);
     }
 

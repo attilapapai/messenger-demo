@@ -23,9 +23,10 @@ public class MessageController {
 
 
     @GetMapping
-    public List<Message> listAllMessages() {
+    public ResponseEntity<List<Message>> listAllMessages() {
         log.info("Listing all messages");
-        return messageRepository.findAll();
+        List<Message> messages =  messageRepository.findAll();
+        return new ResponseEntity<>(messages, HttpStatus.OK);
     }
 
     @PostMapping

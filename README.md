@@ -1,6 +1,79 @@
 # Messenger Demo
 
-TODO: short description for the application, 2 endpoints and the index.html
+This demo application is a simple messaging service. Users can post and retrieve
+messages using the REST API.
+
+## Design Decisions
+
+There is no traditional _service_ layer, since there was no specific
+business logic which required access control, domain object transformation etc.
+which usually takes place at the service layer.
+
+## REST API
+
+### Retrieve all messages
+
+__URL__: `/messages`
+
+__Method__: `GET`
+
+__Success response__
+
+- Code: 200 (OK)
+
+- Example response
+  ```
+  [
+    {
+      "id":1
+      "content":"Hello"
+    },
+    {
+      "id":2,
+      "content":"Hi"
+    }
+  ]
+  ```
+
+### Add new message
+
+__URL__: `/messages`
+
+__Method__: `POST`
+
+__Required parameters__
+
+- `content`
+  - Content of the message
+  - _Type_: _String_
+
+__Example data format__
+
+```
+{
+  "content": "Hello"
+}
+```
+
+__Success response__
+
+- Code: 201 (Created)
+
+- Example response
+
+  ```
+  {
+    "id":1
+    "content":"Hello"
+  }
+  ```
+
+__Error response__
+
+- Code: 400 (Bad Request)
+
+- Cause: Data is not in a valid format
+
 
 ### Prerequisites
 
@@ -33,10 +106,6 @@ or
 This command will build the application and start it on the 8080 port.
 You can access it at `localhost:8080`.
 
-## Design Decisions
-
-- why use h2 instead of real RDMS
-- why no service layer
 
 ## Requirements
 
