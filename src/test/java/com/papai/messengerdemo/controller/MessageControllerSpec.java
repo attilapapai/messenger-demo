@@ -15,13 +15,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Matchers.any;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -61,13 +60,6 @@ public class MessageControllerSpec {
     }
 
     @Test
-    public void whenPostingMessageWithoutContentKeyThenBadRequest() {
-        Map<String, String> req = new HashMap<>(); // no "content" key in json
-        ResponseEntity<Message> response = restTemplate.postForEntity(MESSAGES_ENDPOINT, req, Message.class);
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
-    }
-
-    @Test
     public void whenPostingMessageWithContentNullThenBadRequest() {
         Message message = new Message(); // "content": null in json
         ResponseEntity<Message> response = restTemplate.postForEntity(MESSAGES_ENDPOINT, message, Message.class);
@@ -81,14 +73,19 @@ public class MessageControllerSpec {
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     }
 
+    /**
+     * The purpose of this test to check that the REST layer doesn't change anything when returning
+     * successfully created objects, thus the content of the posted message in this test doesn't matter.
+     */
     @Test
     public void whenPostingMessageThenReturnPersistedMessage() {
-        Message originalMessage = new Message("Hello World!");
-        given(messageRepository.save(originalMessage)).willReturn(originalMessage);
+        Message returnedMessageFromDb = new Message("Im coming from the db!");
+        given(messageRepository.save(any(Message.class))).willReturn(returnedMessageFromDb);
 
-        ResponseEntity<Message> response = restTemplate.postForEntity(MESSAGES_ENDPOINT, originalMessage, Message.class);
+        ResponseEntity<Message> response =
+            restTemplate.postForEntity(MESSAGES_ENDPOINT, new Message("Hello"), Message.class);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
-        assertThat(response.getBody()).isEqualTo(originalMessage);
+        assertThat(response.getBody()).isEqualTo(returnedMessageFromDb);
     }
 }
