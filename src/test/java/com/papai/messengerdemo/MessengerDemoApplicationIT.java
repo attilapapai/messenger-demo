@@ -18,7 +18,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class MessageWorkflowIntegrationTest {
+public class MessengerDemoApplicationIT {
 
     private static final String MESSAGES_ENDPOINT = "/messages";
 
@@ -26,7 +26,7 @@ public class MessageWorkflowIntegrationTest {
     private TestRestTemplate restTemplate;
 
     @Test
-    public void exchangeMessagesTest() {
+    public void messagesWorkflowTest() {
 
         // when initialized, messages should be empty
         ResponseEntity<List<Message>> emptyResponse = restTemplate.exchange(

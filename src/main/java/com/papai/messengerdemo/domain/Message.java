@@ -5,13 +5,15 @@ import org.hibernate.validator.constraints.NotEmpty;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.SequenceGenerator;
 import java.util.Objects;
 
 @Entity
 public class Message {
 
     @Id
-    @GeneratedValue
+    @SequenceGenerator(name = "message_generator", sequenceName = "message_sequence", allocationSize = 1)
+    @GeneratedValue(generator = "message_generator")
     private Long id;
 
     @NotEmpty

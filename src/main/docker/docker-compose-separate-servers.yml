@@ -1,0 +1,28 @@
+version: "3.1"
+
+services:
+
+  server1:
+    image: attilapapai/messenger-demo
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+    depends_on:
+      - db
+    ports:
+      - 8080:8080
+
+  server2:
+    image: attilapapai/messenger-demo
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+    depends_on:
+      - db
+      - server1 # because of concurrent initial Flyway migrations
+    ports:
+      - 8081:8080
+
+  db:
+    image: postgres
+    environment:
+      POSTGRES_USER: messenger
+      POSTGRES_PASSWORD: messenger
