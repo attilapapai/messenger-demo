@@ -3,13 +3,6 @@
 This demo application is a simple messaging service. Users can post and retrieve
 messages using the REST API.
 
-## Design Decisions
-
-There is no traditional _service_ layer, since there was no specific
-business logic which required access control, domain object transformation etc.
-which usually takes place at the service layer.
-
-
 ## Prerequisites
 
 - [Docker](https://docs.docker.com/install/)
@@ -118,12 +111,25 @@ Cause: Data is not in a valid format
 
 ## Getting started with developing the application
 
-1. Start Postgres in Docker container (from the root of the repository):
+1. Start Postgres:
+
     ```
     $ docker run --name messenger-demo-postgres -p 5432:5432 -e POSTGRES_USER=messenger -e POSTGRES_PASSWORD=messenger -d postgres
     ```
+
     Change the parameters according to your system needs. This will expose
     the default Postgres port (5432).
+
+ 2. Start Redis:
+
+    ```
+    $ docker run --name messenger-demo-redis -p 6379:6379 -d redis
+    ```
+
+    Redis will be available at port 6379.
+
+Please note that none of the containers above have persistent storage.
+In case you need the data to survive container restart, add volumes.
 
 Running the application with Gradle:
 
@@ -144,6 +150,9 @@ $ ./gradlew test
 ```
 
 ## Running the integration tests
+
+Make sure that there is Redis instance running, available at 127.0.0.1:6379,
+then run the command:
 
 ```
 $ ./gradlew testInteg

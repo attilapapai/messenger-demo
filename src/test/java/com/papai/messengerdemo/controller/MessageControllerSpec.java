@@ -1,7 +1,7 @@
 package com.papai.messengerdemo.controller;
 
 import com.papai.messengerdemo.domain.Message;
-import com.papai.messengerdemo.repository.MessageRepository;
+import com.papai.messengerdemo.service.MessageService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,11 +32,11 @@ public class MessageControllerSpec {
     private TestRestTemplate restTemplate;
 
     @MockBean
-    private MessageRepository messageRepository;
+    private MessageService messageService;
 
     @Test
     public void whenNoMessagesAreStoredThenResponseMessageListIsEmpty() {
-        given(messageRepository.findAll()).willReturn(emptyList());
+        given(messageService.listAllMessages()).willReturn(emptyList());
         ResponseEntity<List<Message>> response = restTemplate.exchange(
             MESSAGES_ENDPOINT,
             HttpMethod.GET,
@@ -50,7 +50,7 @@ public class MessageControllerSpec {
     @Test
     public void whenMessagesArePresentThenResponseMessageListIsTheSame() {
         List<Message> storedMessages = Arrays.asList(new Message("Hello"), new Message("Bye"));
-        given(messageRepository.findAll()).willReturn(storedMessages);
+        given(messageService.listAllMessages()).willReturn(storedMessages);
         ResponseEntity<List<Message>> response = restTemplate.exchange(
             MESSAGES_ENDPOINT,
             HttpMethod.GET,
@@ -82,7 +82,7 @@ public class MessageControllerSpec {
     @Test
     public void whenPostingMessageThenReturnPersistedMessage() {
         Message returnedMessageFromDb = new Message("Im coming from the db!");
-        given(messageRepository.save(any(Message.class))).willReturn(returnedMessageFromDb);
+        given(messageService.save(any(Message.class))).willReturn(returnedMessageFromDb);
 
         ResponseEntity<Message> response =
             restTemplate.postForEntity(MESSAGES_ENDPOINT, new Message("Hello"), Message.class);

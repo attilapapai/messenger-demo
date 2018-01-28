@@ -7,7 +7,9 @@ jobs:
     - stage: test
       script: ./gradlew test
     - stage: integration test
-      script: ./gradlew testInteg
+      script:
+        - docker run --name messenger-demo-redis -p 6379:6379 -d redis
+        - ./gradlew testInteg
     - stage: docker hub push
       if: branch = master
       script:
