@@ -1,5 +1,156 @@
 # Messenger Demo
 
+This demo application is a simple messaging service. Users can post and retrieve
+messages using the REST API.
+
+## Design Decisions
+
+There is no traditional _service_ layer, since there was no specific
+business logic which required access control, domain object transformation etc.
+which usually takes place at the service layer.
+
+
+## Prerequisites
+
+- [Docker](https://docs.docker.com/install/)
+
+
+## Running the application locally
+
+There are two options for you to run the demo application locally, the
+first one uses `docker-compose`, the latter `docker swarm`.
+
+- Using `Docker Compose`
+
+  ```
+  $ docker-compose -f src/main/docker/docker-compose-separate-servers.yml up
+  ```
+
+  This command will expose 3 services on your system:
+
+  - Spring Boot application on `127.0.0.1:8080`
+  - Spring Boot application on `127.0.0.1:8081`
+  - Postgres database on `127.0.0.1:5432`
+
+- Using `Docker Swarm`
+
+  1. Make sure to enable swarm mode
+
+      ```
+      $ docker swarm init
+      ```
+
+  2. Start the services
+
+      ```
+      $ docker stack deploy -c src/main/docker/docker-compose.yml messenger-demo
+      ```
+
+  After running these commands you should be able access the application
+  on `127.0.0.1:8080`. Please note that by default there are two replicas
+  of the backend and one database running. Reverse-proxy is applied by
+  `docker swarm`.
+
+## REST API
+
+### Retrieve all messages
+
+__URL__: `/messages`
+
+__Method__: `GET`
+
+__Success response__
+
+Code: 200 (OK)
+
+Example response
+```
+[
+  {
+    "id":1
+    "content":"Hello"
+  },
+  {
+    "id":2,
+    "content":"Hi"
+  }
+]
+```
+
+### Add new message
+
+__URL__: `/messages`
+
+__Method__: `POST`
+
+__Required parameters__
+
+- `content`
+  - Content of the message
+  - _Type_: _String_
+
+__Example data format__
+
+```
+{
+  "content": "Hello"
+}
+```
+
+__Success response__
+
+Code: 201 (Created)
+
+Example response
+
+```
+{
+  "id":1
+  "content":"Hello"
+}
+```
+
+__Error response__
+
+Code: 400 (Bad Request)
+
+Cause: Data is not in a valid format
+
+## Getting started with developing the application
+
+1. Start Postgres in Docker container (from the root of the repository):
+    ```
+    $ docker run --name messenger-demo-postgres -p 5432:5432 -e POSTGRES_USER=messenger -e POSTGRES_PASSWORD=messenger -d postgres
+    ```
+    Change the parameters according to your system needs. This will expose
+    the default Postgres port (5432).
+
+Running the application with Gradle:
+
+```
+$ ./gradlew bootRun
+```
+
+Pushing changes to Docker Hub:
+
+```
+$ ./gradlew build dockerPush
+```
+
+## Running the tests
+
+```
+$ ./gradlew test
+```
+
+## Running the integration tests
+
+```
+$ ./gradlew testInteg
+```
+
+## Requirements
+
 The task is to implement a data processing pipeline in the cloud.
 
 - Set up a running environment aligned with the technologies mentioned below
@@ -20,28 +171,3 @@ We're looking for that:
 - The application is built for testability, demonstrated by actual tests
 - Your solution reflects a sense of quality you would be confident in releasing to production
 - Documentation is applied to code / repository describing intent and purpose, as well as complicated / non obvious choices in the implementation
-
-### Prerequisites
-
-## Running the tests
-
-```
-./gradlew test
-```
-
-## Running the application
-
-With Gradle:
-
-```
-./gradlew bootRun
-```
-
-or
-
-```
-./gradlew build && java -jar build/libs/messenger-demo-0.0.1-SNAPSHOT.jar
-```
-
-This command will build the application and start it on the 8080 port.
-You can access it at `localhost:8080`.
