@@ -1,7 +1,15 @@
 language: java
 jdk:
   - openjdk8
-  - oraclejdk8
-script:
-  - ./gradlew test
-  - ./gradlew testInteg
+
+jobs:
+  include:
+    - stage: test
+      script: ./gradlew test
+    - stage: integration test
+      script: ./gradlew testInteg
+    - stage: docker hub push
+      if: branch = master
+      script:
+        - docker login u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"
+        - ./gradlew dockerPush
