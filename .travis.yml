@@ -11,5 +11,5 @@ jobs:
     - stage: docker hub push
       if: branch = master
       script:
-        - docker login u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"
+        - docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"
         - ./gradlew dockerPush
