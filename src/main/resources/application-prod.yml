@@ -6,3 +6,5 @@ spring:
     url: jdbc:postgresql://db:5432/messenger
     username: messenger
     password: messenger
+  rabbitmq:
+    host: rabbitmq

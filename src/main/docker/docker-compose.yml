@@ -23,6 +23,11 @@ services:
     networks:
       - messengernet
 
+  rabbitmq:
+    image: rabbitmq:management
+    networks:
+      - messengernet
+
 networks:
   messengernet:
 

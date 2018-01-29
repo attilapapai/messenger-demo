@@ -1,5 +1,6 @@
 package com.papai.messengerdemo.service;
 
+import com.papai.messengerdemo.configuration.RabbitConfiguration;
 import com.papai.messengerdemo.domain.Message;
 import com.papai.messengerdemo.repository.MessageRepository;
 import org.junit.Test;
@@ -7,8 +8,8 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.listener.ChannelTopic;
+import org.springframework.amqp.core.FanoutExchange;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 
 import java.util.ArrayList;
@@ -22,8 +23,6 @@ import static org.mockito.Mockito.verify;
 @RunWith(MockitoJUnitRunner.class)
 public class MessageServiceSpec {
 
-    private static final String REDIS_TOPIC_NAME = "messenger";
-
     @InjectMocks
     private MessageService service;
 
@@ -31,10 +30,10 @@ public class MessageServiceSpec {
     private MessageRepository messageRepository;
 
     @Mock
-    private RedisTemplate<String, String> redisTemplate;
+    private RabbitTemplate rabbitTemplate;
 
     @Mock
-    private ChannelTopic topic;
+    private FanoutExchange fanout;
 
     @Mock
     private SimpMessagingTemplate simpMessagingTemplate;
@@ -50,7 +49,10 @@ public class MessageServiceSpec {
     @Test
     public void whenSaveThenReturnMessageFromRepositoryWithoutModification() {
         Message messageFromRepository = new Message();
+
         given(messageRepository.save(any(Message.class))).willReturn(messageFromRepository);
+        given(fanout.getName()).willReturn(RabbitConfiguration.FANOUT_NAME);
+
         Message messageFromService = service.save(new Message()); // parameter doesn't matter in this case
         assertThat(messageFromService).isEqualTo(messageFromRepository);
     }
@@ -60,26 +62,16 @@ public class MessageServiceSpec {
         Message message = new Message("Hello listeners!");
 
         given(messageRepository.save(any(Message.class))).willReturn(message);
-        given(topic.getTopic()).willReturn(REDIS_TOPIC_NAME);
+        given(fanout.getName()).willReturn(RabbitConfiguration.FANOUT_NAME);
 
         service.save(new Message()); // parameter doesn't matter in this case
-        verify(redisTemplate).convertAndSend(REDIS_TOPIC_NAME, message.getContent());
+        verify(rabbitTemplate).convertAndSend(RabbitConfiguration.FANOUT_NAME, "", message.getContent());
     }
 
     @Test
     public void whenOnMessageThenUpdateWebSocketListeners() {
         String messageContent = "Hello!";
-        service.onMessage(new org.springframework.data.redis.connection.Message() {
-            @Override
-            public byte[] getBody() {
-                return messageContent.getBytes();
-            }
-
-            @Override
-            public byte[] getChannel() {
-                return new byte[0];
-            }
-        }, new byte[]{});
+        service.receiveMessage(messageContent);
         verify(simpMessagingTemplate).convertAndSend("/messenger", new Message(messageContent));
     }
 }

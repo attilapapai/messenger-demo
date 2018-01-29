@@ -4,17 +4,17 @@ import com.papai.messengerdemo.domain.Message;
 import com.papai.messengerdemo.repository.MessageRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.amqp.core.FanoutExchange;
+import org.springframework.amqp.rabbit.annotation.RabbitListener;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.connection.MessageListener;
-import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.listener.ChannelTopic;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
-public class MessageService implements MessageListener {
+public class MessageService {
 
     private static final Logger log = LoggerFactory.getLogger(MessageService.class);
 
@@ -22,10 +22,10 @@ public class MessageService implements MessageListener {
     private MessageRepository messageRepository;
 
     @Autowired
-    private RedisTemplate<String, Object> redisTemplate;
+    private RabbitTemplate rabbitTemplate;
 
     @Autowired
-    private ChannelTopic topic;
+    private FanoutExchange fanout;
 
     @Autowired
     private SimpMessagingTemplate simpMessagingTemplate;
@@ -37,14 +37,17 @@ public class MessageService implements MessageListener {
     public Message save(Message message) {
         Message persistedMessage =  messageRepository.save(message);
         log.info("Successfully saved message, publishing to listeners: \"{}\"", persistedMessage.getContent());
-        redisTemplate.convertAndSend(topic.getTopic(), persistedMessage.getContent());
+        rabbitTemplate.convertAndSend(fanout.getName(), "", persistedMessage.getContent());
         return persistedMessage;
     }
 
-    @Override
-    public void onMessage(org.springframework.data.redis.connection.Message message, byte[] pattern) {
-        String content = new String(message.getBody());
-        log.info("New message received from Redis, publishing through WebSocket: \"{}\"", content);
-        simpMessagingTemplate.convertAndSend("/messenger", new Message(content));
+    /**
+     * This method will be called if a new message is published by the queue.
+     * @param message message published by the queue
+     */
+    @RabbitListener(queues = "#{queue.name}")
+    public void receiveMessage(String message) {
+        log.info("New message received from queue, publishing through WebSocket: \"{}\"", message);
+        simpMessagingTemplate.convertAndSend("/messenger", new Message(message));
     }
 }

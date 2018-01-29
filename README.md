@@ -25,6 +25,10 @@ first one uses `docker-compose`, the latter `docker swarm`.
   - Spring Boot application on `127.0.0.1:8081`
   - Postgres database on `127.0.0.1:5432`
 
+  If you open two separate browsers with `127.0.0.1:8080` and `127.0.0.1:8081`
+  you should see the message boards. After you `POST` new messages to the
+  correct resource, messages should appear in both browsers.
+
 - Using `Docker Swarm`
 
   1. Make sure to enable swarm mode
@@ -41,8 +45,7 @@ first one uses `docker-compose`, the latter `docker swarm`.
 
   After running these commands you should be able access the application
   on `127.0.0.1:8080`. Please note that by default there are two replicas
-  of the backend and one database running. Reverse-proxy is applied by
-  `docker swarm`.
+  of the backend and reverse-proxy is applied by `docker swarm`.
 
 ## REST API
 
@@ -120,13 +123,13 @@ Cause: Data is not in a valid format
     Change the parameters according to your system needs. This will expose
     the default Postgres port (5432).
 
- 2. Start Redis:
+ 2. Start RabbitMQ:
 
     ```
-    $ docker run --name messenger-demo-redis -p 6379:6379 -d redis
+    $ docker run -d -p 5672:5672 -p 15672:15672 --name messenger-demo-rabbit rabbitmq:3
     ```
 
-    Redis will be available at port 6379.
+    This will start the RabbitMQ instance.
 
 Please note that none of the containers above have persistent storage.
 In case you need the data to survive container restart, add volumes.
@@ -151,7 +154,7 @@ $ ./gradlew test
 
 ## Running the integration tests
 
-Make sure that there is Redis instance running, available at 127.0.0.1:6379,
+Make sure that there is RabbitMQ instance running, available at 127.0.0.1:6379,
 then run the command:
 
 ```
