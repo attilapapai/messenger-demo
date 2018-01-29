@@ -1,7 +1,7 @@
 package com.papai.messengerdemo.controller;
 
 import com.papai.messengerdemo.domain.Message;
-import com.papai.messengerdemo.repository.MessageRepository;
+import com.papai.messengerdemo.service.MessageService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,21 +19,20 @@ public class MessageController {
     private static final Logger log = LoggerFactory.getLogger(MessageController.class);
 
     @Autowired
-    private MessageRepository messageRepository;
+    private MessageService messageService;
 
 
     @GetMapping
     public ResponseEntity<List<Message>> listAllMessages() {
         log.info("Listing all messages");
-        List<Message> messages =  messageRepository.findAll();
+        List<Message> messages =  messageService.listAllMessages();
         return new ResponseEntity<>(messages, HttpStatus.OK);
     }
 
     @PostMapping
     public ResponseEntity<Message> addMessage(@Validated @RequestBody Message message) {
         log.info("Received message: {}", message);
-        Message persistedMessage = messageRepository.save(message); // should have ID
-        log.info("Saved message: {}", persistedMessage);
+        Message persistedMessage = messageService.save(message); // should have ID
         return new ResponseEntity<>(persistedMessage, HttpStatus.CREATED);
     }
 }

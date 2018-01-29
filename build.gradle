@@ -43,13 +43,19 @@ task testInteg(type: Test) {
 
 dependencies {
 	compile('org.springframework.boot:spring-boot-starter-data-jpa')
-	compile('org.springframework.boot:spring-boot-starter-data-redis')
+	compile('org.springframework.boot:spring-boot-starter-amqp')
 	compile('org.springframework.boot:spring-boot-starter-web')
 	compile('org.springframework.boot:spring-boot-starter-websocket')
     compile('org.flywaydb:flyway-core')
     runtime('org.postgresql:postgresql')
     testCompile('org.springframework.boot:spring-boot-starter-test')
     testRuntime('com.h2database:h2')
+
+    compile("org.webjars:webjars-locator")
+    compile("org.webjars:sockjs-client:1.0.2")
+    compile("org.webjars:stomp-websocket:2.3.3")
+    compile("org.webjars:bootstrap:3.3.7")
+    compile("org.webjars:jquery:3.1.0")
 }
 
 docker {

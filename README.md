@@ -3,13 +3,6 @@
 This demo application is a simple messaging service. Users can post and retrieve
 messages using the REST API.
 
-## Design Decisions
-
-There is no traditional _service_ layer, since there was no specific
-business logic which required access control, domain object transformation etc.
-which usually takes place at the service layer.
-
-
 ## Prerequisites
 
 - [Docker](https://docs.docker.com/install/)
@@ -32,6 +25,10 @@ first one uses `docker-compose`, the latter `docker swarm`.
   - Spring Boot application on `127.0.0.1:8081`
   - Postgres database on `127.0.0.1:5432`
 
+  If you open two separate browsers with `127.0.0.1:8080` and `127.0.0.1:8081`
+  you should see the message boards. After you `POST` new messages to the
+  correct resource, messages should appear in both browsers.
+
 - Using `Docker Swarm`
 
   1. Make sure to enable swarm mode
@@ -48,8 +45,7 @@ first one uses `docker-compose`, the latter `docker swarm`.
 
   After running these commands you should be able access the application
   on `127.0.0.1:8080`. Please note that by default there are two replicas
-  of the backend and one database running. Reverse-proxy is applied by
-  `docker swarm`.
+  of the backend and reverse-proxy is applied by `docker swarm`.
 
 ## REST API
 
@@ -118,12 +114,25 @@ Cause: Data is not in a valid format
 
 ## Getting started with developing the application
 
-1. Start Postgres in Docker container (from the root of the repository):
+1. Start Postgres:
+
     ```
     $ docker run --name messenger-demo-postgres -p 5432:5432 -e POSTGRES_USER=messenger -e POSTGRES_PASSWORD=messenger -d postgres
     ```
+
     Change the parameters according to your system needs. This will expose
     the default Postgres port (5432).
+
+ 2. Start RabbitMQ:
+
+    ```
+    $ docker run -d -p 5672:5672 -p 15672:15672 --name messenger-demo-rabbit rabbitmq:3
+    ```
+
+    This will start the RabbitMQ instance.
+
+Please note that none of the containers above have persistent storage.
+In case you need the data to survive container restart, add volumes.
 
 Running the application with Gradle:
 
@@ -144,6 +153,9 @@ $ ./gradlew test
 ```
 
 ## Running the integration tests
+
+Make sure that there is RabbitMQ instance running, available at 127.0.0.1:6379,
+then run the command:
 
 ```
 $ ./gradlew testInteg
