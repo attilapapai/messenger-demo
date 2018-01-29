@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/attilapapai/messenger-demo.svg?branch=master)](https://travis-ci.org/attilapapai/messenger-demo)
+
 # Messenger Demo
 
 This demo application is a simple messaging service. Users can post and retrieve
@@ -23,7 +25,6 @@ first one uses `docker-compose`, the latter `docker swarm`.
 
   - Spring Boot application on `127.0.0.1:8080`
   - Spring Boot application on `127.0.0.1:8081`
-  - Postgres database on `127.0.0.1:5432`
 
   If you open two separate browsers with `127.0.0.1:8080` and `127.0.0.1:8081`
   you should see the message boards. After you `POST` new messages to the
