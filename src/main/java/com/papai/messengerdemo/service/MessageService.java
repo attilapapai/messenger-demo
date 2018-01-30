@@ -1,10 +1,11 @@
 package com.papai.messengerdemo.service;
 
+import com.papai.messengerdemo.configuration.RabbitConfiguration;
+import com.papai.messengerdemo.configuration.WebSocketConfiguration;
 import com.papai.messengerdemo.domain.Message;
 import com.papai.messengerdemo.repository.MessageRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.amqp.core.FanoutExchange;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,9 +26,6 @@ public class MessageService {
     private RabbitTemplate rabbitTemplate;
 
     @Autowired
-    private FanoutExchange fanout;
-
-    @Autowired
     private SimpMessagingTemplate simpMessagingTemplate;
 
     public List<Message> listAllMessages() {
@@ -37,7 +35,7 @@ public class MessageService {
     public Message save(Message message) {
         Message persistedMessage =  messageRepository.save(message);
         log.info("Successfully saved message, publishing to listeners: \"{}\"", persistedMessage.getContent());
-        rabbitTemplate.convertAndSend(fanout.getName(), "", persistedMessage.getContent());
+        rabbitTemplate.convertAndSend(RabbitConfiguration.FANOUT_NAME, "", persistedMessage.getContent());
         return persistedMessage;
     }
 
@@ -48,6 +46,6 @@ public class MessageService {
     @RabbitListener(queues = "#{queue.name}")
     public void receiveMessage(String message) {
         log.info("New message received from queue, publishing through WebSocket: \"{}\"", message);
-        simpMessagingTemplate.convertAndSend("/messenger", new Message(message));
+        simpMessagingTemplate.convertAndSend(WebSocketConfiguration.DESTINATION_PREFIX, new Message(message));
     }
 }

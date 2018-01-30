@@ -12,7 +12,7 @@ messages using the REST API.
 
 ## Running the application locally
 
-There are two options for you to run the demo application locally, the
+There are two options running the demo application locally, the
 first one uses `docker-compose`, the latter `docker swarm`.
 
 - Using `Docker Compose`
@@ -130,11 +130,6 @@ Cause: Data is not in a valid format
     $ docker run -d -p 5672:5672 -p 15672:15672 --name messenger-demo-rabbit rabbitmq:3
     ```
 
-    This will start the RabbitMQ instance.
-
-Please note that none of the containers above have persistent storage.
-In case you need the data to survive container restart, add volumes.
-
 Running the application with Gradle:
 
 ```
@@ -155,8 +150,7 @@ $ ./gradlew test
 
 ## Running the integration tests
 
-Make sure that there is RabbitMQ instance running, available at 127.0.0.1:6379,
-then run the command:
+Make sure that there is a RabbitMQ instance running then:
 
 ```
 $ ./gradlew testInteg

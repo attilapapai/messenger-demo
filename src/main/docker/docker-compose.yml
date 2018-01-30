@@ -2,6 +2,20 @@ version: "3.1"
 
 services:
 
+  db:
+    image: postgres
+    environment:
+      POSTGRES_USER: messenger
+      POSTGRES_PASSWORD: messenger
+    networks:
+      - messengernet
+
+
+  rabbitmq:
+    image: rabbitmq:management
+    networks:
+      - messengernet
+
   server:
     image: attilapapai/messenger-demo
     deploy:
@@ -12,19 +26,6 @@ services:
       SPRING_PROFILES_ACTIVE: prod
     ports:
       - 8080:8080
-    networks:
-      - messengernet
-
-  db:
-    image: postgres
-    environment:
-      POSTGRES_USER: messenger
-      POSTGRES_PASSWORD: messenger
-    networks:
-      - messengernet
-
-  rabbitmq:
-    image: rabbitmq:management
     networks:
       - messengernet
 
