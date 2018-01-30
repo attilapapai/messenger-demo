@@ -21,13 +21,13 @@ first one uses `docker-compose`, the latter `docker swarm`.
   $ docker-compose -f src/main/docker/docker-compose-separate-servers.yml up
   ```
 
-  This command will expose 3 services on your system:
+  This command will expose 2 services on your system:
 
-  - Spring Boot application on `127.0.0.1:8080`
-  - Spring Boot application on `127.0.0.1:8081`
+  - Spring Boot (instance 1) application on `127.0.0.1:8080`
+  - Spring Boot (instance 2) application on `127.0.0.1:8081`
 
   If you open two separate browsers with `127.0.0.1:8080` and `127.0.0.1:8081`
-  you should see the message boards. After you `POST` new messages to the
+  you should be able to see the message boards. After you `POST` new messages to the
   correct resource, messages should appear in both browsers.
 
 - Using `Docker Swarm`
@@ -64,7 +64,7 @@ Example response
 ```
 [
   {
-    "id":1
+    "id":1,
     "content":"Hello"
   },
   {
@@ -102,7 +102,7 @@ Example response
 
 ```
 {
-  "id":1
+  "id":1,
   "content":"Hello"
 }
 ```
@@ -142,13 +142,13 @@ Pushing changes to Docker Hub:
 $ ./gradlew build dockerPush
 ```
 
-## Running the tests
+## Running tests
 
 ```
 $ ./gradlew test
 ```
 
-## Running the integration tests
+## Running integration tests
 
 Make sure that there is a RabbitMQ instance running then:
 
